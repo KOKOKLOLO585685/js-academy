@@ -1,0 +1,17 @@
+{
+  "name": "أكاديمية جافا سكربت التفاعلية",
+  "short_name": "تعلم البرمجة",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1e1e2f",
+  "theme_color": "#00b894",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%231e1e2f'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='180' fill='%2300ffcc'>&lt;JS&gt;</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
