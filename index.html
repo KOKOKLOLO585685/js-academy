@@ -3,64 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- إعدادات السيو الأساسية لمحرك بحث جوجل -->
-  <title>أكاديمية جافا سكربت التفاعلية - 20 درساً</title>
-  <meta name="description" content="تعلم لغة جافا سكربت (JavaScript) مجاناً من الصفر عبر 20 درساً تفاعلياً وتحديات برمجية فورية للمبتدئين.">
-  <meta name="keywords" content="أكاديمية جافا سكربت, تعلم جافا سكريبت, دروس JavaScript, تعلم البرمجة">
+  <title>أكاديمية جافا سكربت التفاعلية - تعلم البرمجة في 20 درساً</title>
+  <meta name="description" content="تعلم لغة جافا سكربت مجاناً من الصفر عبر 20 درساً تفاعلياً مع محرر أكواد مباشر وحفظ التقدم بحسابك.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://kokoklolo585685.github.io/js-academy/" />
-
-  <!-- البيانات المنظمة لجوجل لتعريف الموقع كدورة تعليمية -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Course",
-    "name": "أكاديمية جافا سكربت التفاعلية - 20 درساً",
-    "description": "دورة تفاعلية لتعلم أساسيات لغة جافا سكربت في 20 درساً.",
-    "provider": { "@type": "Organization", "name": "أكاديمية جافا سكربت" },
-    "inLanguage": "ar",
-    "isAccessibleForFree": true
-  }
-  </script>
-
+  <link rel="canonical" href="https://github.io" />
+  <script src="https://jsdelivr.net"></script>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; max-width: 800px; margin: 20px auto; padding: 20px; line-height: 1.6; }
-    h1, h2 { color: #eab308; }
-    .card { background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; }
-    .task { background: rgba(234,179,8,0.1); border-right: 4px solid #eab308; padding: 10px; margin: 15px 0; }
-    textarea { width: 100%; height: 120px; background: #020617; color: #4ade80; font-family: monospace; padding: 10px; border-radius: 6px; direction: ltr; }
-    button { padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 10px 5px 10px 0; }
-    .run { background: #3b82f6; color: #fff; } .check { background: #22c55e; color: #052e16; } .next { background: #eab308; display: none; }
-    pre { background: #020617; padding: 12px; border-radius: 6px; direction: ltr; color: #cbd5e1; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; max-width: 850px; margin: 20px auto; padding: 15px; line-height: 1.6; }
+    h1, h2, h3 { color: #eab308; }
+    .box { background: #1e293b; padding: 18px; border-radius: 10px; border: 1px solid #334155; margin-bottom: 18px; }
+    .task { background: rgba(234,179,8,0.1); border-right: 4px solid #eab308; padding: 10px; margin: 12px 0; }
+    input, textarea { background: #020617; color: #4ade80; border: 1px solid #475569; border-radius: 6px; padding: 10px; font-family: monospace; direction: ltr; }
+    textarea { width: 100%; height: 130px; margin: 10px 0; }
+    button { padding: 9px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 5px; }
+    .btn-blue { background: #3b82f6; color: #fff; } .btn-green { background: #22c55e; color: #052e16; }
+    .btn-gold { background: #eab308; color: #0f172a; display: none; } .btn-red { background: #ef4444; color: #fff; }
+    pre { background: #020617; padding: 12px; border-radius: 6px; direction: ltr; color: #cbd5e1; white-space: pre-wrap; }
   </style>
 </head>
 <body>
 
-  <h1>أكاديمية جافا سكربت التفاعلية</h1>
-  <p id="prog">التقدم: 0 / 20</p>
+  <header style="text-align: center; margin-bottom: 20px;">
+    <h1>أكاديمية جافا سكربت التفاعلية</h1>
+    <p>تعلم أساسيات لغة JavaScript في 20 درساً عملياً</p>
+  </header>
 
-  <div class="card">
+  <section class="box" style="text-align: center;">
+    <div id="login-ui">
+      <h3>تسجيل الدخول لحفظ تقدمك</h3>
+      <input type="email" id="email" placeholder="example@gmail.com" style="width: 240px;">
+      <button class="btn-blue" onclick="login()">إرسال رابط الدخول إلى Gmail</button>
+    </div>
+    <div id="user-ui" style="display: none;">
+      <span style="color: #4ade80; font-weight: bold;">الحساب: <span id="u-email"></span></span>
+      <button class="btn-red" onclick="logout()">خروج</button>
+    </div>
+    <p id="msg" style="margin-top: 8px; font-size: 0.9rem;"></p>
+  </section>
+
+  <section class="box">
+    <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px;">
+      <span>منهج الدورة التفاعلي</span>
+      <span id="prog">التقدم: 0 / 20</span>
+    </div>
     <h2 id="title"></h2>
     <p id="desc"></p>
-    <div class="task"><strong>المطلوب لتجاوز الدرس:</strong> <span id="task"></span></div>
+    <div class="task"><strong>المطلوب:</strong> <span id="task"></span></div>
     <textarea id="code" spellcheck="false"></textarea>
     <div>
-      <button class="run" onclick="run()">تشغيل الكود ▶</button>
-      <button class="check" onclick="check()">فحص الإجابة ✓</button>
-      <button class="next" id="next" onclick="next()">الدرس التالي ⬅</button>
+      <button class="btn-blue" onclick="run()">تشغيل ▶</button>
+      <button class="btn-green" onclick="check()">فحص ✓</button>
+      <button class="btn-gold" id="next" onclick="next()">التالي ⬅</button>
     </div>
     <pre id="out">النتيجة ستظهر هنا...</pre>
-  </div>
+    <p id="fb" style="font-weight: bold; margin-top: 8px;"></p>
+  </section>
 
   <script>
+    const sb = supabase.createClient("https://supabase.co", "sb_publishable_gI04KNDWvS7viEOW_2nRvw_dm0ih1li");
+
+    async function login() {
+      const email = document.getElementById("email").value.trim();
+      const msg = document.getElementById("msg");
+      if (!email) return msg.textContent = "أدخل بريد Gmail أولاً.";
+      msg.textContent = "جاري الإرسال...";
+      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: "https://github.io" } });
+      msg.style.color = error ? "#f87171" : "#4ade80";
+      msg.textContent = error ? error.message : "تم الإرسال! افتح بريدك في Gmail واضغط على Sign in.";
+    }
+
+    async function logout() { await sb.auth.signOut(); location.reload(); }
+
+    async function syncUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        document.getElementById("login-ui").style.display = "none";
+        document.getElementById("user-ui").style.display = "block";
+        document.getElementById("u-email").textContent = user.email;
+        if (typeof user.user_metadata?.step === "number") { idx = user.user_metadata.step; load(); }
+      }
+    }
+
     const lessons = [
       { t: "1. الطباعة (console.log)", d: "اطبع النصوص باستخدام console.log()", q: "اطبع Hello World", s: 'console.log("");', c: o => o === "Hello World" },
       { t: "2. المتغيرات (let)", d: "عرّف متغيراً باستخدام let", q: "عرّف age = 25 واطبعه", s: 'let age = 25;\nconsole.log(age);', c: o => o === "25" },
-      { t: "3. الجمع (+)", d: "اجمع الأرقام بعلامة +", q: "اطبع ناتج 10 + 15", s: 'console.log();', c: o => o === "25" }
-      // يمكنك إضافة باقي الدروس الـ 20 هنا بنفس النمط المختصر
+      { t: "3. الثوابت (const)", d: "عرّف ثابتاً لا يتغير باستخدام const", q: "عرّف country = Egypt واطبعه", s: 'const country = "";\nconsole.log(country);', c: o => o === "Egypt" },
+      { t: "4. الجمع (+)", d: "اجمع الأرقام بعلامة +", q: "اطبع ناتج 15 + 35", s: 'console.log();', c: o => o === "50" },
+      { t: "5. الضرب (*)", d: "اضرب الأرقام بعلامة *", q: "اطبع ناتج 6 * 7", s: 'console.log();', c: o => o === "42" },
+      { t: "6. دمج النصوص", d: "اربط نصين بعلامة +", q: "ادمج Java و Script لتطبع JavaScript", s: 'console.log("Java" + "");', c: o => o === "JavaScript" },
+      { t: "7. طول النص (length)", d: "احسب عدد الحروف بـ .length", q: "اطبع طول كلمة Programming", s: 'console.log("Programming".length);', c: o => o === "11" },
+      { t: "8. المقارنة (Boolean)", d: "تحقق من صحة المقارنة", q: "اطبع نتيجة 10 > 5", s: 'console.log();', c: o => o === "true" },
+      { t: "9. المساواة (===)", d: "قارن القيمة والنوع بـ ===", q: "اطبع نتيجة 10 === 10", s: 'console.log();', c: o => o === "true" },
+      { t: "10. الشرط (if)", d: "نفّذ الكود إذا تحقق الشرط", q: "إذا score === 100 اطبع Win", s: 'let score = 100;\nif (score === 100) console.log("");', c: o => o === "Win" },
+      { t: "11. الشرط البديل (else)", d: "نفّذ else عند عدم تحقق الشرط", q: "اطبع Fail لأن mark < 50", s: 'let mark = 30;\nif (mark >= 50) console.log("Pass"); else console.log("");', c: o => o === "Fail" },
+      { t: "12. المصفوفات (Arrays)", d: "خزّن عدة قيم في []", q: "اطبع أول عنصر colors", s: 'let colors = ["Red", "Blue"];\nconsole.log();', c: o => o === "Red" },
+      { t: "13. الإضافة للمصفوفة (push)", d: "أضف عنصراً بـ .push()", q: "أضف 4 للمصفوفة واطبع طولها", s: 'let nums = [1, 2, 3];\nnums.push(4);\nconsole.log(nums.length);', c: o => o === "4" },
+      { t: "14. التكرار (for)", d: "كرر الكود بحلقة for", q: "اطبع الأرقام من 1 إلى 3", s: 'for (let i = 1; i <= 3; i++) console.log(i);', c: o => o === "1\n2\n3" },
+      { t: "15. التكرار (while)", d: "كرر الكود طالما الشرط صحيح", q: "اطبع 5 بحلقة while", s: 'let x = 5;\nwhile (x <= 5) { console.log(x); x++; }', c: o => o === "5" },
+      { t: "16. الدوال (Functions)", d: "عرّف دالة واستدعها", q: "استدعِ sayHi لطباعة Hi", s: 'function sayHi() { console.log("Hi"); }\n', c: o => o === "Hi" },
+      { t: "17. المعاملات (Parameters)", d: "مرر قيمة للدالة", q: "مرر 4 للدالة double لطباعة 8", s: 'function double(n) { console.log(n * 2); }\ndouble();', c: o => o === "8" },
+      { t: "18. الإرجاع (return)", d: "أرجع قيمة من الدالة", q: "أرجع a + b واطبع 10", s: 'function add(a, b) { return ; }\nconsole.log(add(4, 6));', c: o => o === "10" },
+      { t: "19. الكائنات (Objects)", d: "خزّن البيانات كمفتاح وقيمة", q: "اطبع user.name", s: 'let user = { name: "Ali" };\nconsole.log();', c: o => o === "Ali" },
+      { t: "20. التخرج النهائي", d: "أكملت جميع الدروس!", q: "اطبع Done 20 Lessons", s: 'console.log("Done 20 Lessons");', c: o => o === "Done 20 Lessons" }
     ];
-    let idx = 0;
+
+    let idx = parseInt(localStorage.getItem("js_step")) || 0;
+    if (idx >= lessons.length) idx = 0;
 
     function load() {
       const l = lessons[idx];
@@ -70,6 +118,7 @@
       document.getElementById("task").textContent = l.q;
       document.getElementById("code").value = l.s;
       document.getElementById("out").textContent = "النتيجة ستظهر هنا...";
+      document.getElementById("fb").textContent = "";
       document.getElementById("next").style.display = "none";
     }
 
@@ -77,20 +126,38 @@
       let logs = [];
       try {
         new Function("console", document.getElementById("code").value)({ log: (...a) => logs.push(a.join(" ")) });
-        document.getElementById("out").textContent = logs.join("\n") || "(تم التنفيذ)";
-      } catch (e) { document.getElementById("out").textContent = "خطأ: " + e.message; }
-    }
-
-    function check() {
-      run();
-      if (lessons[idx].c(document.getElementById("out").textContent.trim())) {
-        document.getElementById("out").textContent += "\n✓ إجابة صحيحة!";
-        if (idx < lessons.length - 1) document.getElementById("next").style.display = "inline-block";
+        const res = logs.join("\n");
+        document.getElementById("out").textContent = res || "(تم التنفيذ)";
+        return res.trim();
+      } catch (e) {
+        document.getElementById("out").textContent = "خطأ: " + e.message;
+        return null;
       }
     }
 
-    function next() { idx++; load(); }
+    function check() {
+      const res = run();
+      const fb = document.getElementById("fb");
+      if (res !== null && lessons[idx].c(res)) {
+        fb.style.color = "#4ade80";
+        fb.textContent = idx < 19 ? "✓ إجابة صحيحة!" : "🎉 مبارك! أتممت الـ 20 درساً بنجاح!";
+        if (idx < 19) document.getElementById("next").style.display = "inline-block";
+        else { document.getElementById("prog").textContent = "التقدم: 20 / 20"; save(20); }
+      } else {
+        fb.style.color = "#f87171";
+        fb.textContent = "✗ حاول مرة أخرى.";
+      }
+    }
+
+    async function save(step) {
+      localStorage.setItem("js_step", step);
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) await sb.auth.updateUser({ data: { step } });
+    }
+
+    function next() { idx++; save(idx); load(); }
     load();
+    syncUser();
   </script>
 </body>
 </html>
