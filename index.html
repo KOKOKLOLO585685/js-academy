@@ -2,72 +2,67 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>أكاديمية جافا سكربت التفاعلية</title>
-  <script src="https://gstatic.com"></script>
-  <script src="https://gstatic.com"></script>
+  <title>أكاديمية جافا سكربت - الحسابات</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; max-width: 850px; margin: 15px auto; padding: 15px; }
-    .box { background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; margin-bottom: 12px; }
-    input, textarea { background: #020617; color: #4ade80; border: 1px solid #475569; padding: 10px; border-radius: 6px; direction: ltr; width: 100%; margin: 5px 0; box-sizing: border-box; }
-    textarea { height: 110px; font-family: monospace; }
-    button { padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: #3b82f6; color: #fff; margin: 3px; }
-    .green { background: #22c55e; color: #000; } .gold { background: #eab308; color: #000; } .red { background: #ef4444; }
-    pre { background: #020617; padding: 10px; direction: ltr; border-radius: 6px; color: #4ade80; }
-    .grid { display: grid; grid-template-columns: 220px 1fr; gap: 12px; }
-    @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
-    .item { background: #0f172a; padding: 8px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
-    .active { border: 1px solid #eab308; color: #eab308; font-weight: bold; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; max-width: 450px; margin: 40px auto; padding: 15px; }
+    .box { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; text-align: center; }
+    input { background: #020617; color: #4ade80; border: 1px solid #475569; padding: 12px; border-radius: 6px; direction: ltr; width: 100%; margin: 8px 0; box-sizing: border-box; font-size: 1rem; }
+    button { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: #3b82f6; color: #fff; margin: 4px; font-size: 0.95rem; }
+    .green { background: #22c55e; color: #000; width: 100%; margin-top: 10px; }
+    .gold { background: #eab308; color: #000; }
+    .red { background: #ef4444; margin-top: 15px; }
   </style>
 </head>
 <body>
 
-  <h1 style="text-align:center; color:#eab308;">أكاديمية جافا سكربت التفاعلية</h1>
+  <h1 style="text-align:center; color:#eab308;">أكاديمية جافا سكربت</h1>
 
-  <div id="auth-box" class="box" style="max-width:380px; margin:20px auto; text-align:center;">
-    <button type="button" onclick="setMode('login')" id="b-in" class="gold">تسجيل الدخول</button>
-    <button type="button" onclick="setMode('signup')" id="b-up">إنشاء حساب</button>
+  <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
+  <div id="auth-box" class="box">
+    <div style="margin-bottom: 15px;">
+      <button type="button" id="b-in" class="gold">تسجيل الدخول</button>
+      <button type="button" id="b-up">إنشاء حساب جديد</button>
+    </div>
     <input type="email" id="email" placeholder="البريد الإلكتروني (Gmail)">
     <input type="password" id="pass" placeholder="كلمة المرور (6 أحرف+)">
-    <button type="button" onclick="authAction()" id="sub-btn" class="green" style="width:100%;">دخول</button>
-    <p id="msg" style="margin-top:8px; font-size:0.9rem;"></p>
+    <button type="button" id="sub-btn" class="green">دخول</button>
+    <p id="msg" style="margin-top:12px; font-size:0.9rem; font-weight:bold;"></p>
   </div>
 
-  <div id="app-box" style="display:none;">
-    <div class="box" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>الحساب: <b id="u-mail" style="color:#4ade80;"></b> <small id="v-stat"></small></span>
-      <div>
-        <b id="prog" style="color:#eab308; margin-left:10px;">التقدم: 0 / 20</b>
-        <button type="button" onclick="logoutUser()" class="red">خروج</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="box" style="max-height:420px; overflow-y:auto;" id="list"></div>
-      <div class="box">
-        <h2 id="title" style="color:#eab308; margin-top:0;"></h2>
-        <p id="task" style="color:#fbbf24;"></p>
-        <textarea id="code"></textarea>
-        <button type="button" onclick="run()">تشغيل ▶</button>
-        <button type="button" class="green" onclick="check()">فحص ✓</button>
-        <button type="button" class="gold" id="next" onclick="next()" style="display:none;">التالي ⬅</button>
-        <pre id="out">النتيجة...</pre>
-        <b id="fb"></b>
-      </div>
-    </div>
+  <!-- شاشة الحساب بعد الدخول -->
+  <div id="app-box" class="box" style="display:none;">
+    <h2 style="color:#4ade80;">تم تسجيل الدخول بنجاح ✓</h2>
+    <p>البريد الإلكتروني: <b id="u-mail" style="color:#eab308;"></b></p>
+    <p id="v-stat" style="margin: 10px 0;"></p>
+    <button type="button" id="resend-btn" class="gold" style="display:none;">إعادة إرسال رابط التفعيل</button>
+    <br>
+    <button type="button" id="logout-btn" class="red">تسجيل الخروج</button>
   </div>
 
-  <script>
-    var currentMode = "login", idx = 0, done = JSON.parse(localStorage.getItem("js_done") || "[]");
-    
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey: "AIzaSyCrpxspRnQJTZTQHvmxoEMJpAkDdAMargQ",
-        authDomain: "://firebaseapp.com",
-        projectId: "js-academy-bb1fe",
-        appId: "1:626882542856:web:88ddbd3a32f9cc4e14c0bd"
-      });
-    }
-    var fbAuth = firebase.auth();
+  <script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut } from "https://gstatic.com";
+
+    const app = initializeApp({
+      apiKey: "AIzaSyCrpxspRnQJTZTQHvmxoEMJpAkDdAMargQ",
+      authDomain: "://firebaseapp.com",
+      projectId: "js-academy-bb1fe",
+      appId: "1:626882542856:web:88ddbd3a32f9cc4e14c0bd"
+    });
+    const auth = getAuth(app);
+
+    let currentMode = "login";
+
+    document.getElementById("b-in").onclick = () => setMode("login");
+    document.getElementById("b-up").onclick = () => setMode("signup");
+    document.getElementById("sub-btn").onclick = authAction;
+    document.getElementById("logout-btn").onclick = () => signOut(auth);
+    document.getElementById("resend-btn").onclick = async () => {
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
+        alert("تم إرسال رسالة التفعيل من جوجل إلى بريدك في Gmail!");
+      }
+    };
 
     function setMode(m) {
       currentMode = m;
@@ -78,24 +73,24 @@
     }
 
     async function authAction() {
-      var e = document.getElementById("email").value.trim();
-      var p = document.getElementById("pass").value;
-      var msg = document.getElementById("msg");
+      const e = document.getElementById("email").value.trim();
+      const p = document.getElementById("pass").value;
+      const msg = document.getElementById("msg");
       if (!e || p.length < 6) {
         msg.style.color = "#f87171";
-        msg.textContent = "أدخل Gmail وكلمة مرور من 6 أحرف+";
+        msg.textContent = "أدخل بريد Gmail وكلمة مرور من 6 أحرف على الأقل.";
         return;
       }
       msg.style.color = "#eab308";
       msg.textContent = "جاري المعالجة...";
       try {
         if (currentMode === "signup") {
-          var c = await fbAuth.createUserWithEmailAndPassword(e, p);
-          await c.user.sendEmailVerification();
+          const cred = await createUserWithEmailAndPassword(auth, e, p);
+          await sendEmailVerification(cred.user);
           msg.style.color = "#4ade80";
-          msg.textContent = "تم الإنشاء! أرسلت جوجل رسالة التفعيل لبريدك.";
+          msg.textContent = "تم الإنشاء! أرسلت جوجل رسالة التفعيل إلى بريدك في Gmail.";
         } else {
-          await fbAuth.signInWithEmailAndPassword(e, p);
+          await signInWithEmailAndPassword(auth, e, p);
         }
       } catch (err) {
         msg.style.color = "#f87171";
@@ -103,84 +98,22 @@
       }
     }
 
-    function logoutUser() { fbAuth.signOut(); }
-
-    fbAuth.onAuthStateChanged(function(u) {
+    onAuthStateChanged(auth, (u) => {
       document.getElementById("auth-box").style.display = u ? "none" : "block";
       document.getElementById("app-box").style.display = u ? "block" : "none";
       if (u) {
         document.getElementById("u-mail").textContent = u.email;
-        document.getElementById("v-stat").textContent = u.emailVerified ? "(مُفعّل ✓)" : "(راجع Gmail للتفعيل)";
-        render();
-        load();
+        const stat = document.getElementById("v-stat");
+        const resend = document.getElementById("resend-btn");
+        if (u.emailVerified) {
+          stat.innerHTML = "<span style='color:#4ade80;'>حالة الحساب: مُفعّل بنجاح ✓</span>";
+          resend.style.display = "none";
+        } else {
+          stat.innerHTML = "<span style='color:#fbbf24;'>حالة الحساب: غير مُفعّل (راجع بريدك في Gmail)</span>";
+          resend.style.display = "inline-block";
+        }
       }
     });
-
-    var lessons = [
-      { t: "1. الطباعة", q: "اطبع: مرحبا بالعالم", s: 'console.log("اكتب النص هنا");', c: o => o === "مرحبا بالعالم" },
-      { t: "2. الأرقام", q: "اطبع الرقم 2026", s: 'console.log();', c: o => o === "2026" },
-      { t: "3. المتغيرات", q: "عرّف age = 25 واطبعه", s: 'let age = 25;\nconsole.log(age);', c: o => o === "25" },
-      { t: "4. الثوابت", q: "عرّف country = Algeria واطبعه", s: 'const country = "";\nconsole.log(country);', c: o => o === "Algeria" },
-      { t: "5. الجمع", q: "اطبع 15 + 35", s: 'console.log();', c: o => o === "50" },
-      { t: "6. الضرب", q: "اطبع 6 * 7", s: 'console.log();', c: o => o === "42" },
-      { t: "7. دمج النصوص", q: "ادمج Java و Script", s: 'console.log("Java" + "");', c: o => o === "JavaScript" },
-      { t: "8. طول النص", q: "طول كلمة Programming", s: 'console.log("Programming".length);', c: o => o === "11" },
-      { t: "9. المقارنة", q: "نتيجة 10 > 5", s: 'console.log();', c: o => o === "true" },
-      { t: "10. المساواة", q: "نتيجة 10 === 10", s: 'console.log();', c: o => o === "true" },
-      { t: "11. الشرط if", q: "إذا score === 100 اطبع Win", s: 'let score = 100;\nif (score === 100) console.log("");', c: o => o === "Win" },
-      { t: "12. الشرط else", q: "اطبع Fail لأن mark < 50", s: 'let mark = 30;\nif (mark >= 50) console.log("Pass"); else console.log("");', c: o => o === "Fail" },
-      { t: "13. المصفوفات", q: "اطبع أول عنصر colors", s: 'let colors = ["Red", "Blue"];\nconsole.log(colors[]);', c: o => o === "Red" },
-      { t: "14. الإضافة push", q: "أضف 4 للمصفوفة واطبع طولها", s: 'let nums = [];\nnums.push(4);\nconsole.log(nums.length);', c: o => o === "4" },
-      { t: "15. التكرار for", q: "اطبع 1 إلى 3", s: 'for (let i = 1; i <= 3; i++) console.log(i);', c: o => o === "1\n2\n3" },
-      { t: "16. التكرار while", q: "اطبع 5 بحلقة while", s: 'let x = 5;\nwhile (x <= 5) { console.log(x); x++; }', c: o => o === "5" },
-      { t: "17. الدوال", q: "استدعِ sayHi لطباعة Hi", s: 'function sayHi() { console.log("Hi"); }\n', c: o => o === "Hi" },
-      { t: "18. المعاملات", q: "مرر 4 لـ double لطباعة 8", s: 'function double(n) { console.log(n * 2); }\ndouble();', c: o => o === "8" },
-      { t: "19. الإرجاع return", q: "أرجع a + b واطبع 10", s: 'function add(a, b) { return ; }\nconsole.log(add(4, 6));', c: o => o === "10" },
-      { t: "20. التخرج", q: "اطبع Done 20 Lessons", s: 'console.log("Done 20 Lessons");', c: o => o === "Done 20 Lessons" }
-    ];
-
-    function render() {
-      var list = document.getElementById("list"); list.innerHTML = "";
-      lessons.forEach(function(l, i) {
-        var d = document.createElement("div");
-        d.className = "item" + (i === idx ? " active" : "");
-        d.textContent = l.t + (done.includes(i) ? " ✅" : "");
-        d.onclick = function() { idx = i; render(); load(); };
-        list.appendChild(d);
-      });
-      document.getElementById("prog").textContent = "التقدم: " + done.length + " / 20";
-    }
-
-    function load() {
-      var l = lessons[idx];
-      document.getElementById("title").textContent = l.t;
-      document.getElementById("task").textContent = "المطلوب: " + l.q;
-      document.getElementById("code").value = l.s;
-      document.getElementById("out").textContent = "النتيجة...";
-      document.getElementById("fb").textContent = "";
-      document.getElementById("next").style.display = "none";
-    }
-
-    function run() {
-      var logs = [];
-      try {
-        new Function("console", document.getElementById("code").value)({ log: function() { logs.push(Array.from(arguments).join(" ")); } });
-        var r = logs.join("\n");
-        document.getElementById("out").textContent = r || "(تم التنفيذ)";
-        return r.trim();
-      } catch (e) { document.getElementById("out").textContent = "خطأ: " + e.message; return null; }
-    }
-
-    function check() {
-      var r = run(), fb = document.getElementById("fb");
-      if (r !== null && lessons[idx].c(r)) {
-        fb.style.color = "#4ade80"; fb.textContent = "✓ صحيح!";
-        if (!done.includes(idx)) { done.push(idx); localStorage.setItem("js_done", JSON.stringify(done)); render(); }
-        if (idx < 19) document.getElementById("next").style.display = "inline-block";
-      } else { fb.style.color = "#f87171"; fb.textContent = "✗ حاول مجدداً"; }
-    }
-
-    function next() { if (idx < 19) { idx++; render(); load(); } }
   </script>
 </body>
 </html>
