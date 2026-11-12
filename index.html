@@ -6,7 +6,7 @@
   <script src="https://gstatic.com"></script>
   <script src="https://gstatic.com"></script>
   <style>
-    body { font-family: sans-serif; background: #0f172a; color: #fff; max-width: 850px; margin: 15px auto; padding: 15px; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; max-width: 850px; margin: 15px auto; padding: 15px; }
     .box { background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; margin-bottom: 12px; }
     input, textarea { background: #020617; color: #4ade80; border: 1px solid #475569; padding: 10px; border-radius: 6px; direction: ltr; width: 100%; margin: 5px 0; box-sizing: border-box; }
     textarea { height: 110px; font-family: monospace; }
@@ -37,7 +37,7 @@
       <span>الحساب: <b id="u-mail" style="color:#4ade80;"></b> <small id="v-stat"></small></span>
       <div>
         <b id="prog" style="color:#eab308; margin-left:10px;">التقدم: 0 / 20</b>
-        <button type="button" onclick="auth.signOut()" class="red">خروج</button>
+        <button type="button" onclick="logoutUser()" class="red">خروج</button>
       </div>
     </div>
 
@@ -58,13 +58,16 @@
 
   <script>
     var currentMode = "login", idx = 0, done = JSON.parse(localStorage.getItem("js_done") || "[]");
-    firebase.initializeApp({
-      apiKey: "AIzaSyCrpxspRnQJTZTQHvmxoEMJpAkDdAMargQ",
-      authDomain: "://firebaseapp.com",
-      projectId: "js-academy-bb1fe",
-      appId: "1:626882542856:web:88ddbd3a32f9cc4e14c0bd"
-    });
-    var auth = firebase.auth();
+    
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyCrpxspRnQJTZTQHvmxoEMJpAkDdAMargQ",
+        authDomain: "://firebaseapp.com",
+        projectId: "js-academy-bb1fe",
+        appId: "1:626882542856:web:88ddbd3a32f9cc4e14c0bd"
+      });
+    }
+    var fbAuth = firebase.auth();
 
     function setMode(m) {
       currentMode = m;
@@ -75,25 +78,41 @@
     }
 
     async function authAction() {
-      var e = document.getElementById("email").value.trim(), p = document.getElementById("pass").value, msg = document.getElementById("msg");
-      if (!e || p.length < 6) { msg.style.color = "#f87171"; msg.textContent = "أدخل Gmail وكلمة مرور من 6 أحرف+"; return; }
-      msg.style.color = "#eab308"; msg.textContent = "جاري المعالجة...";
+      var e = document.getElementById("email").value.trim();
+      var p = document.getElementById("pass").value;
+      var msg = document.getElementById("msg");
+      if (!e || p.length < 6) {
+        msg.style.color = "#f87171";
+        msg.textContent = "أدخل Gmail وكلمة مرور من 6 أحرف+";
+        return;
+      }
+      msg.style.color = "#eab308";
+      msg.textContent = "جاري المعالجة...";
       try {
         if (currentMode === "signup") {
-          var c = await auth.createUserWithEmailAndPassword(e, p);
+          var c = await fbAuth.createUserWithEmailAndPassword(e, p);
           await c.user.sendEmailVerification();
-          msg.style.color = "#4ade80"; msg.textContent = "تم الإنشاء! أرسلت جوجل رسالة التفعيل لبريدك.";
-        } else { await auth.signInWithEmailAndPassword(e, p); }
-      } catch (err) { msg.style.color = "#f87171"; msg.textContent = err.message; }
+          msg.style.color = "#4ade80";
+          msg.textContent = "تم الإنشاء! أرسلت جوجل رسالة التفعيل لبريدك.";
+        } else {
+          await fbAuth.signInWithEmailAndPassword(e, p);
+        }
+      } catch (err) {
+        msg.style.color = "#f87171";
+        msg.textContent = "خطأ: " + err.message;
+      }
     }
 
-    auth.onAuthStateChanged(function(u) {
+    function logoutUser() { fbAuth.signOut(); }
+
+    fbAuth.onAuthStateChanged(function(u) {
       document.getElementById("auth-box").style.display = u ? "none" : "block";
       document.getElementById("app-box").style.display = u ? "block" : "none";
       if (u) {
         document.getElementById("u-mail").textContent = u.email;
         document.getElementById("v-stat").textContent = u.emailVerified ? "(مُفعّل ✓)" : "(راجع Gmail للتفعيل)";
-        render(); load();
+        render();
+        load();
       }
     });
 
