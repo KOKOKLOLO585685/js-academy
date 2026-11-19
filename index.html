@@ -1,119 +1,83 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>أكاديمية جافا سكربت - الحسابات</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; max-width: 450px; margin: 40px auto; padding: 15px; }
-    .box { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; text-align: center; }
-    input { background: #020617; color: #4ade80; border: 1px solid #475569; padding: 12px; border-radius: 6px; direction: ltr; width: 100%; margin: 8px 0; box-sizing: border-box; font-size: 1rem; }
-    button { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: #3b82f6; color: #fff; margin: 4px; font-size: 0.95rem; }
-    .green { background: #22c55e; color: #000; width: 100%; margin-top: 10px; }
-    .gold { background: #eab308; color: #000; }
-    .red { background: #ef4444; margin-top: 15px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدونة أخبار العالم</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #222;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: #1a73e8;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        header h1 { margin: 0; font-size: 24px; }
+        .controls { display: flex; align-items: center; gap: 10px; }
+        select {
+            padding: 8px 14px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+        }
+        .card h3 { margin: 0 0 8px 0; color: #111; }
+        .meta { font-size: 13px; color: #666; margin-bottom: 10px; }
+        .card p { line-height: 1.6; color: #444; }
+        .card a {
+            display: inline-block;
+            margin-top: 8px;
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .card a:hover { text-decoration: underline; }
+        .status { text-align: center; padding: 30px; font-size: 18px; color: #555; }
+    </style>
 </head>
 <body>
 
-  <h1 style="text-align:center; color:#eab308;">أكاديمية جافا سكربت</h1>
+    <header>
+        <h1>🌍 مدونة أخبار العالم</h1>
+        <div class="controls">
+            <label for="countrySelect">اختر البلد:</label>
+            <select id="countrySelect">
+                <option value="world">العالم (أخبار دولية)</option>
+                <option value="dz">الجزائر</option>
+                <option value="eg">مصر</option>
+                <option value="sa">السعودية</option>
+                <option value="ae">الإمارات</option>
+                <option value="ma">المغرب</option>
+                <option value="us">الولايات المتحدة</option>
+                <option value="fr">فرنسا</option>
+            </select>
+        </div>
+    </header>
 
-  <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
-  <div id="auth-box" class="box">
-    <div style="margin-bottom: 15px;">
-      <button type="button" id="b-in" class="gold">تسجيل الدخول</button>
-      <button type="button" id="b-up">إنشاء حساب جديد</button>
-    </div>
-    <input type="email" id="email" placeholder="البريد الإلكتروني (Gmail)">
-    <input type="password" id="pass" placeholder="كلمة المرور (6 أحرف+)">
-    <button type="button" id="sub-btn" class="green">دخول</button>
-    <p id="msg" style="margin-top:12px; font-size:0.9rem; font-weight:bold;"></p>
-  </div>
+    <main id="newsContainer">
+        <div class="status">جاري تحميل الأخبار...</div>
+    </main>
 
-  <!-- شاشة الحساب بعد الدخول -->
-  <div id="app-box" class="box" style="display:none;">
-    <h2 style="color:#4ade80;">تم تسجيل الدخول بنجاح ✓</h2>
-    <p>البريد الإلكتروني: <b id="u-mail" style="color:#eab308;"></b></p>
-    <p id="v-stat" style="margin: 10px 0;"></p>
-    <button type="button" id="resend-btn" class="gold" style="display:none;">إعادة إرسال رابط التفعيل</button>
-    <br>
-    <button type="button" id="logout-btn" class="red">تسجيل الخروج</button>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://gstatic.com";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut } from "https://gstatic.com";
-
-    const app = initializeApp({
-      apiKey: "AIzaSyCrpxspRnQJTZTQHvmxoEMJpAkDdAMargQ",
-      authDomain: "://firebaseapp.com",
-      projectId: "js-academy-bb1fe",
-      appId: "1:626882542856:web:88ddbd3a32f9cc4e14c0bd"
-    });
-    const auth = getAuth(app);
-
-    let currentMode = "login";
-
-    document.getElementById("b-in").onclick = () => setMode("login");
-    document.getElementById("b-up").onclick = () => setMode("signup");
-    document.getElementById("sub-btn").onclick = authAction;
-    document.getElementById("logout-btn").onclick = () => signOut(auth);
-    document.getElementById("resend-btn").onclick = async () => {
-      if (auth.currentUser) {
-        await sendEmailVerification(auth.currentUser);
-        alert("تم إرسال رسالة التفعيل من جوجل إلى بريدك في Gmail!");
-      }
-    };
-
-    function setMode(m) {
-      currentMode = m;
-      document.getElementById("b-in").className = m === "login" ? "gold" : "";
-      document.getElementById("b-up").className = m === "signup" ? "gold" : "";
-      document.getElementById("sub-btn").textContent = m === "login" ? "دخول" : "إنشاء حساب وإرسال التفعيل";
-      document.getElementById("msg").textContent = "";
-    }
-
-    async function authAction() {
-      const e = document.getElementById("email").value.trim();
-      const p = document.getElementById("pass").value;
-      const msg = document.getElementById("msg");
-      if (!e || p.length < 6) {
-        msg.style.color = "#f87171";
-        msg.textContent = "أدخل بريد Gmail وكلمة مرور من 6 أحرف على الأقل.";
-        return;
-      }
-      msg.style.color = "#eab308";
-      msg.textContent = "جاري المعالجة...";
-      try {
-        if (currentMode === "signup") {
-          const cred = await createUserWithEmailAndPassword(auth, e, p);
-          await sendEmailVerification(cred.user);
-          msg.style.color = "#4ade80";
-          msg.textContent = "تم الإنشاء! أرسلت جوجل رسالة التفعيل إلى بريدك في Gmail.";
-        } else {
-          await signInWithEmailAndPassword(auth, e, p);
-        }
-      } catch (err) {
-        msg.style.color = "#f87171";
-        msg.textContent = "خطأ: " + err.message;
-      }
-    }
-
-    onAuthStateChanged(auth, (u) => {
-      document.getElementById("auth-box").style.display = u ? "none" : "block";
-      document.getElementById("app-box").style.display = u ? "block" : "none";
-      if (u) {
-        document.getElementById("u-mail").textContent = u.email;
-        const stat = document.getElementById("v-stat");
-        const resend = document.getElementById("resend-btn");
-        if (u.emailVerified) {
-          stat.innerHTML = "<span style='color:#4ade80;'>حالة الحساب: مُفعّل بنجاح ✓</span>";
-          resend.style.display = "none";
-        } else {
-          stat.innerHTML = "<span style='color:#fbbf24;'>حالة الحساب: غير مُفعّل (راجع بريدك في Gmail)</span>";
-          resend.style.display = "inline-block";
-        }
-      }
-    });
-  </script>
+    <script src="app.js"></script>
 </body>
 </html>
