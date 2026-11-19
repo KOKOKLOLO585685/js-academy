@@ -1,93 +1,84 @@
 const countrySelect = document.getElementById("countrySelect");
 const newsContainer = document.getElementById("newsContainer");
 
-const COUNTRY_QUERIES = {
-    world: { query: "أخبار العالم", lang: "ar", gl: "EG", ceid: "EG:ar" },
-    dz: { query: "الجزائر", lang: "ar", gl: "DZ", ceid: "DZ:ar" },
-    eg: { query: "مصر", lang: "ar", gl: "EG", ceid: "EG:ar" },
-    sa: { query: "السعودية", lang: "ar", gl: "SA", ceid: "SA:ar" },
-    ae: { query: "الإمارات", lang: "ar", gl: "AE", ceid: "AE:ar" },
-    ma: { query: "المغرب", lang: "ar", gl: "MA", ceid: "MA:ar" },
-    us: { query: "United States", lang: "en", gl: "US", ceid: "US:en" },
-    fr: { query: "France", lang: "fr", gl: "FR", ceid: "FR:fr" }
+const COUNTRY_CONFIG = {
+    world: { label: "العالم", q: "world news" },
+    dz: { label: "الجزائر", q: "Algeria" },
+    eg: { label: "مصر", q: "Egypt" },
+    sa: { label: "السعودية", q: "Saudi Arabia" },
+    ae: { label: "الإمارات", q: "UAE" },
+    ma: { label: "المغرب", q: "Morocco" },
+    us: { label: "الولايات المتحدة", q: "United States" },
+    fr: { label: "فرنسا", q: "France" }
 };
 
-function fetchWithTimeout(url, ms = 8000) {
+const FALLBACK_NEWS = {
+    dz: [
+        { title: "مستجدات الاقتصاد والتكنولوجيا في الجزائر", date: "اليوم", url: "https://news.google.com/search?q=الجزائر" },
+        { title: "أبرز الأحداث الرياضية والثقافية في الجزائر", date: "اليوم", url: "https://news.google.com/search?q=الجزائر+رياضة" }
+    ],
+    world: [
+        { title: "أهم العناوين والتطورات الدولية اليوم", date: "اليوم", url: "https://news.google.com/search?q=أخبار+العالم" },
+        { title: "مستجدات العلوم والتقنية حول العالم", date: "اليوم", url: "https://news.google.com/search?q=تكنولوجيا+العالم" }
+    ]
+};
+
+function fetchTimeout(url, ms = 6000) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), ms);
-    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+    const id = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(id));
 }
 
 async function loadNews(countryCode) {
-    newsContainer.innerHTML = '<div class="status">جاري تحميل أحدث الأخبار...</div>';
-    const config = COUNTRY_QUERIES[countryCode] || COUNTRY_QUERIES.world;
+    const cfg = COUNTRY_CONFIG[countryCode] || COUNTRY_CONFIG.world;
+    newsContainer.innerHTML = `<div class="status">جاري جلب أخبار: ${cfg.label}...</div>`;
 
-    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(config.query)}&hl=${config.lang}&gl=${config.gl}&ceid=${config.ceid}`;
+    try {
+        const apiUrl = `https://content.guardianapis.com/search?q=${encodeURIComponent(cfg.q)}&page-size=12&api-key=test`;
+        const res = await fetchTimeout(apiUrl, 6000);
+        if (!res.ok) throw new Error("Network response not ok");
 
-    // المحاولة الأولى عبر rss2json ثم بديل عبر allorigins
-    const endpoints = [
-        { type: "json", url: `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}` },
-        { type: "xml", url: `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}` }
-    ];
+        const data = await res.json();
+        const results = data?.response?.results || [];
 
-    for (const ep of endpoints) {
-        try {
-            const res = await fetchWithTimeout(ep.url, 8000);
-            if (!res.ok) continue;
-
-            let items = [];
-
-            if (ep.type === "json") {
-                const data = await res.json();
-                if (data.status === "ok" && Array.isArray(data.items) && data.items.length > 0) {
-                    items = data.items.map(i => ({
-                        title: i.title,
-                        link: i.link,
-                        pubDate: i.pubDate
-                    }));
-                }
-            } else {
-                const xmlText = await res.text();
-                const doc = new DOMParser().parseFromString(xmlText, "text/xml");
-                const nodes = Array.from(doc.querySelectorAll("item"));
-                items = nodes.map(n => ({
-                    title: n.querySelector("title")?.textContent || "بدون عنوان",
-                    link: n.querySelector("link")?.textContent || "#",
-                    pubDate: n.querySelector("pubDate")?.textContent || ""
-                }));
-            }
-
-            if (items.length > 0) {
-                renderArticles(items.slice(0, 15));
-                return;
-            }
-        } catch (_) {
-            // جرّب المصدر التالي
+        if (results.length > 0) {
+            const items = results.map(r => ({
+                title: r.webTitle,
+                date: r.webPublicationDate ? new Date(r.webPublicationDate).toLocaleDateString("ar-EG") : "حديث",
+                url: r.webUrl
+            }));
+            renderArticles(items, cfg.label, false);
+            return;
         }
+        throw new Error("Empty results");
+    } catch (_) {
+        // عرض أخبار احتياطية فورية حتى لا تبقى الصفحة معلقة
+        const backup = FALLBACK_NEWS[countryCode] || FALLBACK_NEWS.world;
+        renderArticles(backup, cfg.label, true);
     }
-
-    newsContainer.innerHTML =
-        '<div class="status">تعذّر جلب الأخبار حالياً (قد يكون بسبب حجب الطلبات أو بطء المصدر). جرّب تحديث الصفحة أو إيقاف مانع الإعلانات مؤقتاً.</div>';
 }
 
-function renderArticles(articles) {
+function renderArticles(articles, label, isFallback) {
     newsContainer.innerHTML = "";
+
+    if (isFallback) {
+        const note = document.createElement("div");
+        note.className = "card";
+        note.innerHTML = `<div class="meta">تنبيه: تعذّر الوصول المباشر لمزود الأخبار الخارجي في متصفحك الآن، تم عرض روابط سريعة لـ (${label}):</div>`;
+        newsContainer.appendChild(note);
+    }
+
     articles.forEach(item => {
         const card = document.createElement("article");
         card.className = "card";
 
-        const parsedDate = new Date(item.pubDate);
-        const dateText = isNaN(parsedDate.getTime())
-            ? "حديث"
-            : parsedDate.toLocaleDateString("ar-EG", { year: "numeric", month: "short", day: "numeric" });
-
         const safeTitle = String(item.title).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        const safeLink = item.link || "#";
+        const safeUrl = item.url || "#";
 
         card.innerHTML = `
             <h3>${safeTitle}</h3>
-            <div class="meta">تاريخ النشر: ${dateText}</div>
-            <a href="${safeLink}" target="_blank" rel="noopener noreferrer">اقرأ التفاصيل من المصدر ←</a>
+            <div class="meta">القسم: ${label} — التاريخ: ${item.date}</div>
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer">فتح الخبر ←</a>
         `;
         newsContainer.appendChild(card);
     });
@@ -97,5 +88,4 @@ countrySelect.addEventListener("change", (e) => {
     loadNews(e.target.value);
 });
 
-// تحميل البلد المختار حالياً عند فتح الصفحة
 loadNews(countrySelect.value || "world");
